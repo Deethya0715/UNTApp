@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { GestureHandlerRootView, TextInput } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font'; // Ensure expo-font is installed
 import colors from './Config/colors';
 
@@ -118,24 +118,52 @@ function Grades({ navigation }) {
 function AddClass({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Add Class!</Text>
+      <Text style={styles.addClassText}>Add Class!</Text>
+
+      {/* Class Name Input */}
+      <Text style={styles.label}>Class Name:</Text>
+      <TextInput
+        style={styles.textInput}
+        placeholder="Enter Class Name"
+        placeholderTextColor="#888"
+      />
+
+      {/* Professor Name Input */}
+      <Text style={styles.label}>Professor Name:</Text>
+      <TextInput
+        style={styles.textInput}
+        placeholder="Enter Professor Name"
+        placeholderTextColor="#888"
+      />
+
+      {/* Section Input */}
+      <Text style={styles.label}>Section:</Text>
+      <TextInput
+        style={styles.textInput}
+        placeholder="Enter Section"
+        placeholderTextColor="#888"
+      />
+
+      {/* Footer Buttons */}
       <View style={styles.footerContainerAddClass}>
         <CustomButton
           title="Cancel"
           onPress={() => navigation.navigate('Grades')}
           backgroundColor={colors.darkOrange}
-          style={styles.buttonHalf} // Apply style to make it half the width
+          style={[styles.button, styles.cancelButton]}
         />
         <CustomButton
           title="Save"
           onPress={() => navigation.navigate('Grades')}
           backgroundColor={colors.darkOrange}
-          style={styles.buttonHalf} // Apply style to make it half the width
+          style={[styles.button, styles.saveButton]}
         />
       </View>
     </View>
   );
 }
+
+
 
 function ExistingClass() {
   return (
@@ -214,31 +242,43 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 20,
   },
-  
-  footerContainerAddClass: {
-    flexDirection: 'row', // Arrange buttons in a row
-    width: 400, // Full width of the screen
-    justifyContent: 'space-between', // Space between buttons
-    position: 'absolute', // Position it at the bottom
-    bottom: 20, // Space from bottom
-    paddingHorizontal: 20, // Padding on sides
-  },
-  buttonHalf: {
-    flex: 1, // Each button takes up half of the footerContainer
-    height: 60, 
-    width: 100
-  },
   buttonWrapper: {
     marginVertical: 5,
     borderRadius: 8,
     paddingVertical: 15,
     alignItems: 'center',
   },
+  addClassText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.darkPeriwinkle || 'blue',
+    textAlign: 'center',
+    marginVertical: 10,
+    top: -350,
+    fontFamily: 'Nosifer-Regular', // Set the font family here
+  },
   buttonText: {
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Nosifer-Regular', // Set the font family here
-    
   },
+  label: {
+      alignSelf: 'flex-start',
+      fontSize: 18,
+      color: colors.darkPeriwinkle || 'blue',
+      fontFamily: 'Nosifer-Regular',
+      marginTop: 10,
+    },
+    textInput: {
+      width: '100%',
+      height: 50,
+      borderColor: '#ccc',
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingHorizontal: 10,
+      marginBottom: 15,
+      fontFamily: 'Nosifer-Regular',
+      color: 'white',
+    },
 });
