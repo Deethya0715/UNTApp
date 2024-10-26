@@ -139,6 +139,7 @@ function AddClass({ navigation }) {
       {/* Section Input */}
       <Text style={styles.label}>Section:</Text>
       <TextInput
+        keyboardType='numeric'
         style={styles.textInput}
         placeholder="Enter Section"
         placeholderTextColor="#888"
