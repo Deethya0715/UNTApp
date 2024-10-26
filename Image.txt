@@ -1,0 +1,21 @@
+<Image
+          source={require('./assets/cat.jpg')}
+          style={styles.logo}
+        />
+
+        <CustomButton
+          title="Login"
+          onPress={() => navigation.navigate('Login Screen')}
+          backgroundColor={colors.darkPeriwinkle || 'blue'}
+        />
+
+
+[YourName]MarksMystique.com.
+
+
+
+ <Stack.Screen 
+            name="Login" 
+            component={LoginScreen} 
+            options={{ title: 'Login' }} // You can customize this too
+          />
