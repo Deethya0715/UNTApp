@@ -214,6 +214,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 20,
   },
+  
   footerContainerAddClass: {
     flexDirection: 'row', // Arrange buttons in a row
     width: 400, // Full width of the screen
