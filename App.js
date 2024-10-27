@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'; 
+import React from 'react'; 
 import {
   StyleSheet,
   SafeAreaView,
@@ -6,7 +6,9 @@ import {
   View,
   TouchableOpacity,
   Image,
+  Keyboard,
   Pressable,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
@@ -34,65 +36,20 @@ export default function App() {
             headerShown: false,
           }}
         >
-          <Stack.Screen 
-            name="Home" 
-            component={HomeScreen} 
-            options={{ title: 'My App' }} 
-          />
-          <Stack.Screen 
-            name="Login" 
-            component={LoginScreen} 
-            options={{ title: 'Login' }} 
-          />
-          <Stack.Screen 
-            name="Sign-Up" 
-            component={SignUp} 
-            options={{ title: 'SignUp' }} 
-          />
-          <Stack.Screen 
-            name="Grades" 
-            component={Grades} 
-            options={{ title: 'Grades' }} 
-          />
-          <Stack.Screen 
-            name="Add Class" 
-            component={AddClass} 
-            options={{ title: 'Add Class' }} 
-          />
-          <Stack.Screen 
-            name="Existing Class" 
-            component={ExistingClass} 
-            options={{ title: 'Existing Class' }} 
-          />
-          
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Sign-Up" component={SignUp} />
+          <Stack.Screen name="Forgot Password" component={ForgotPassword} />
+          <Stack.Screen name="Grades" component={Grades} />
+          <Stack.Screen name="Add Class" component={AddClass} />
+          <Stack.Screen name="Existing Class" component={ExistingClass} />
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>
   );
 }
 
-// Add your Google Sheets API code inside HomeScreen or wherever required
 function HomeScreen({ navigation }) {
-  // Google Sheets API Setup
-  const SHEET_ID = ' /1-LIdtG1uXMeicCtcGEJNKTRGHvjxmoxJCWP5FeKidaE'; // Replace with your actual Google Sheet ID
-  const API_KEY = 'AIzaSyD4GDVXpnJP2Wl15sIbb7To8q3gRm7wAQo'; // Replace with your API key from Google Cloud Console
-  const URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1?key=${API_KEY}`;
-
-  useEffect(() => {
-    fetchSheetData(); // Fetch data when the component mounts
-  }, []);
-
-  // Fetch data from the Google Sheet
-  const fetchSheetData = async () => {
-    try {
-      const response = await fetch(URL);
-      const data = await response.json();
-      console.log('Sheet Data:', data.values); // Log the fetched data
-    } catch (error) {
-      console.error('Error fetching sheet data:', error);
-    }
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -111,58 +68,88 @@ function HomeScreen({ navigation }) {
   );
 }
 
-// Example SignUp component
-function SignUp() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Hello React World!</Text>
-    </View>
-  );
-}
-
-// Example LoginScreen component
 function LoginScreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Please Login Or Sign-Up</Text>
-      <TextInput
-        style={styles.textInput}
-        placeholder="Email"
-        placeholderTextColor="#888"
-      />
-      <CustomButton
-        title="Cancel"
-        onPress={() => navigation.navigate('Grades')}
-        backgroundColor={colors.darkOrange}
-        style={[styles.button, styles.cancelButton]}
-      />
-      <CustomButton
-        title="Save"
-        onPress={() => navigation.navigate('Grades')}
-        backgroundColor={colors.darkOrange}
-        style={[styles.button, styles.saveButton]}
-      />
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
+      <View style={styles.container}>
+        <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Image
+            style={styles.backButtonImage} 
+            source={require('./assets/backButton.jpeg')} 
+          />
+        </Pressable>
+        <Text style={styles.text}>Hello React World!</Text>
+        <Text style={styles.label}>Email:</Text>
+        <TextInput
+          style={styles.textInput}
+          placeholder="i.e. LydiaDeetz33088@gmail.com"
+          placeholderTextColor={colors.placeholderTextColor || '#888'}
+        />
+        <CustomButton
+          title="Login"
+          onPress={() => navigation.navigate('Grades')}
+          backgroundColor={colors.darkOrange}
+        />
+        <CustomButton
+          title="Sign-Up"
+          onPress={() => navigation.navigate('Sign-Up')}
+          backgroundColor={colors.darkOrange}
+        />
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
-// Example Grades component
-function Grades({ navigation }) {
+function ForgotPassword({ navigation }) {
   return (
-    <SafeAreaView style={[styles.container]}>
-      <Pressable 
-        style={styles.backButton} 
-        onPress={() => navigation.goBack()}
-      >
+    <SafeAreaView style={styles.container}>
+      <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
         <Image
           style={styles.backButtonImage} 
           source={require('./assets/backButton.jpeg')} 
         />
       </Pressable>
-      <Pressable 
-        style={styles.addButton} 
-        onPress={() => navigation.navigate('Add Class')}
-      >
+      <Text style={styles.text}>Forgot Password!</Text>
+    </SafeAreaView>
+  );
+}
+
+function SignUp({ navigation }) {
+  return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
+      <View style={styles.container}>
+      <Text style={styles.text}>Hello React World!</Text>
+      <Text style={styles.label}>Email:</Text>
+      <TextInput
+        style={styles.textInput}
+        placeholder="i.e. LydiaDeetz33088@gmail.com"
+        placeholderTextColor={colors.placeholderTextColor || '#888'}
+      />
+      <CustomButton
+        title="Sign Up"
+        onPress={() => navigation.navigate('Grades')}
+        backgroundColor={colors.darkOrange}
+      />
+      <CustomButton
+        title="Back"
+        onPress={() => navigation.navigate('Login')}
+        backgroundColor={colors.darkOrange}
+      />
+    </View>
+    </TouchableWithoutFeedback>
+  );
+}
+
+function Grades({ navigation }) {
+  return (
+    <SafeAreaView style={styles.container}>
+      <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Image
+          style={styles.backButtonImage} 
+          source={require('./assets/backButton.jpeg')} 
+        />
+      </Pressable>
+      <Pressable style={styles.addButton} onPress={() => navigation.navigate('Add Class')}>
         <Image
           style={styles.addButtonImage} 
           source={require('./assets/addButton.jpeg')} 
@@ -172,53 +159,61 @@ function Grades({ navigation }) {
   );
 }
 
-// Example AddClass component
 function AddClass({ navigation }) {
   return (
-    <View style={styles.container}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
+    <SafeAreaView style={styles.container}>
+      <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Image
+          style={styles.backButtonImage} 
+          source={require('./assets/backButton.jpeg')} 
+        />
+      </Pressable>
       <Text style={styles.addClassText}>Add Class!</Text>
-
       <Text style={styles.label}>Class Name:</Text>
       <TextInput
         style={styles.textInput}
         placeholder="Enter Class Name"
-        placeholderTextColor="#888"
+        placeholderTextColor={colors.placeholderTextColor || '#888'}
       />
-
       <Text style={styles.label}>Professor Name:</Text>
       <TextInput
         style={styles.textInput}
         placeholder="Enter Professor Name"
         placeholderTextColor="#888"
       />
-
       <Text style={styles.label}>Section:</Text>
       <TextInput
-        keyboardType='numeric'
+        keyboardType="numeric"
         style={styles.textInput}
         placeholder="Enter Section"
         placeholderTextColor="#888"
       />
-
-      <View style={styles.footerContainerAddClass}>
-        <CustomButton
-          title="Cancel"
-          onPress={() => navigation.navigate('Grades')}
-          backgroundColor={colors.darkOrange}
-          style={[styles.button, styles.cancelButton]}
-        />
+      <SafeAreaView style={styles.footerContainerAddClass}>
         <CustomButton
           title="Save"
           onPress={() => navigation.navigate('Grades')}
           backgroundColor={colors.darkOrange}
-          style={[styles.button, styles.saveButton]}
         />
-      </View>
+        <CustomButton
+          title="Cancel"
+          onPress={() => navigation.navigate('Grades')}
+          backgroundColor={colors.darkOrange}
+        />
+      </SafeAreaView>
+    </SafeAreaView>
+   </TouchableWithoutFeedback>
+  );
+}
+
+function ExistingClass({ navigation }) {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.text}>Hello React World!</Text>
     </View>
   );
 }
 
-// Custom button component
 function CustomButton({ title, onPress, backgroundColor }) {
   return (
     <TouchableOpacity
@@ -230,225 +225,7 @@ function CustomButton({ title, onPress, backgroundColor }) {
   );
 }
 
-// Stylesheet
 const styles = StyleSheet.create({
-  export default function App() {
-    const [fontsLoaded] = useFonts({
-      'Nosifer-Regular': require('./assets/fonts/NosiferRegular.ttf'), // Load the custom font
-    });
-  
-    if (!fontsLoaded) {
-      return null; // Optionally return a loading component or null until the fonts are loaded
-    }
-  
-    return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <NavigationContainer>
-          <Stack.Navigator 
-            initialRouteName="Home"
-            screenOptions={{
-              headerShown: false,
-            }}
-          >
-            <Stack.Screen 
-              name="Home" 
-              component={HomeScreen} 
-              options={{ title: 'My App' }} 
-            />
-            <Stack.Screen 
-              name="Login" 
-              component={LoginScreen} 
-              options={{ title: 'Login' }} 
-            />
-            <Stack.Screen 
-              name="Sign-Up" 
-              component={SignUp} 
-              options={{ title: 'SignUp' }} 
-            />
-            <Stack.Screen 
-              name="Grades" 
-              component={Grades} 
-              options={{ title: 'Grades' }} 
-            />
-            <Stack.Screen 
-              name="Add Class" 
-              component={AddClass} 
-              options={{ title: 'Add Class' }} 
-            />
-            <Stack.Screen 
-              name="Existing Class" 
-              component={ExistingClass} 
-              options={{ title: 'Existing Class' }} 
-            />
-            
-          </Stack.Navigator>
-        </NavigationContainer>
-      </GestureHandlerRootView>
-    );
-  }
-  
-  // Add your Google Sheets API code inside HomeScreen or wherever required
-  function HomeScreen({ navigation }) {
-    // Google Sheets API Setup
-    const SHEET_ID = 'your-google-sheet-id'; // Replace with your actual Google Sheet ID
-    const API_KEY = 'your-api-key'; // Replace with your API key from Google Cloud Console
-    const URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1?key=${API_KEY}`;
-  
-    useEffect(() => {
-      fetchSheetData(); // Fetch data when the component mounts
-    }, []);
-  
-    // Fetch data from the Google Sheet
-    const fetchSheetData = async () => {
-      try {
-        const response = await fetch(URL);
-        const data = await response.json();
-        console.log('Sheet Data:', data.values); // Log the fetched data
-      } catch (error) {
-        console.error('Error fetching sheet data:', error);
-      }
-    };
-  
-    return (
-      <SafeAreaView style={styles.container}>
-        <Image
-          source={require('./assets/NewLogo.jpg')}
-          style={styles.logo}
-        />
-        <Text style={styles.textHome}>Welcome to HexBook!</Text>
-        <View style={styles.footerContainer}>
-          <CustomButton
-            title="Get Started"
-            onPress={() => navigation.navigate('Login')}
-            backgroundColor={colors.darkOrange}
-          />
-        </View>
-      </SafeAreaView>
-    );
-  }
-  
-  // Example SignUp component
-  function SignUp() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.text}>Hello React World!</Text>
-      </View>
-    );
-  }
-  
-  // Example LoginScreen component
-  function LoginScreen({ navigation }) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.text}>Please Login Or Sign-Up</Text>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Email"
-          placeholderTextColor="#888"
-        />
-        <CustomButton
-          title="Cancel"
-          onPress={() => navigation.navigate('Grades')}
-          backgroundColor={colors.darkOrange}
-          style={[styles.button, styles.cancelButton]}
-        />
-        <CustomButton
-          title="Save"
-          onPress={() => navigation.navigate('Grades')}
-          backgroundColor={colors.darkOrange}
-          style={[styles.button, styles.saveButton]}
-        />
-      </View>
-    );
-  }
-  
-  // Example Grades component
-  function Grades({ navigation }) {
-    return (
-      <SafeAreaView style={[styles.container]}>
-        <Pressable 
-          style={styles.backButton} 
-          onPress={() => navigation.goBack()}
-        >
-          <Image
-            style={styles.backButtonImage} 
-            source={require('./assets/backButton.jpeg')} 
-          />
-        </Pressable>
-        <Pressable 
-          style={styles.addButton} 
-          onPress={() => navigation.navigate('Add Class')}
-        >
-          <Image
-            style={styles.addButtonImage} 
-            source={require('./assets/addButton.jpeg')} 
-          />
-        </Pressable>
-      </SafeAreaView>
-    );
-  }
-  
-  // Example AddClass component
-  function AddClass({ navigation }) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.addClassText}>Add Class!</Text>
-  
-        <Text style={styles.label}>Class Name:</Text>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Enter Class Name"
-          placeholderTextColor="#888"
-        />
-  
-        <Text style={styles.label}>Professor Name:</Text>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Enter Professor Name"
-          placeholderTextColor="#888"
-        />
-  
-        <Text style={styles.label}>Section:</Text>
-        <TextInput
-          keyboardType='numeric'
-          style={styles.textInput}
-          placeholder="Enter Section"
-          placeholderTextColor="#888"
-        />
-  
-        <View style={styles.footerContainerAddClass}>
-          <CustomButton
-            title="Cancel"
-            onPress={() => navigation.navigate('Grades')}
-            backgroundColor={colors.darkOrange}
-            style={[styles.button, styles.cancelButton]}
-          />
-          <CustomButton
-            title="Save"
-            onPress={() => navigation.navigate('Grades')}
-            backgroundColor={colors.darkOrange}
-            style={[styles.button, styles.saveButton]}
-          />
-        </View>
-      </View>
-    );
-  }
-  
-  // Custom button component
-  function CustomButton({ title, onPress, backgroundColor }) {
-    return (
-      <TouchableOpacity
-        style={[styles.buttonWrapper, { backgroundColor }]}
-        onPress={onPress}
-      >
-        <Text style={styles.buttonText}>{title}</Text>
-      </TouchableOpacity>
-    );
-  }
-
-// Stylesheet
-const styles = StyleSheet.create({
-  // Define your styles here
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -489,7 +266,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 10,
     top: -100,
-    fontFamily: 'Nosifer-Regular', // Set the font family here
+    fontFamily: 'Nosifer-Regular',
   },
   text: {
     fontSize: 18,
@@ -498,7 +275,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 10,
     top: -100,
-    fontFamily: 'Nosifer-Regular', // Set the font family here
+    fontFamily: 'Nosifer-Regular',
   },
   footerContainer: {
     position: 'absolute',
@@ -519,31 +296,30 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 10,
     top: -350,
-    fontFamily: 'Nosifer-Regular', // Set the font family here
+    fontFamily: 'Nosifer-Regular',
   },
   buttonText: {
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
-    fontFamily: 'Nosifer-Regular', // Set the font family here
+    fontFamily: 'Nosifer-Regular',
   },
   label: {
-      alignSelf: 'flex-start',
-      fontSize: 18,
-      color: colors.darkPeriwinkle || 'blue',
-      fontFamily: 'Nosifer-Regular',
-      marginTop: 10,
-    },
-    textInput: {
-      width: '100%',
-      height: 50,
-      borderColor: '#ccc',
-      borderWidth: 1,
-      borderRadius: 8,
-      paddingHorizontal: 10,
-      marginBottom: 15,
-      fontFamily: 'Nosifer-Regular',
-      color: 'white',
-    },
+    alignSelf: 'flex-start',
+    fontSize: 18,
+    color: colors.darkPeriwinkle || 'blue',
+    fontFamily: 'Nosifer-Regular',
+    marginTop: 10,
+  },
+  textInput: {
+    width: '100%',
+    height: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 15,
+    fontWeight: 'bold',
+    color: 'white',
+  },
 });
-  
