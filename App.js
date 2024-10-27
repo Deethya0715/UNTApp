@@ -42,7 +42,11 @@ export default function App() {
           <Stack.Screen name="Forgot Password" component={ForgotPassword} />
           <Stack.Screen name="Grades" component={Grades} />
           <Stack.Screen name="Add Class" component={AddClass} />
+          <Stack.Screen name="Add Assignments" component={AddAssignments} />
           <Stack.Screen name="Existing Class" component={ExistingClass} />
+
+
+          
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>
@@ -50,6 +54,65 @@ export default function App() {
 }
 
 function HomeScreen({ navigation }) {
+  const SHEET_ID = '1-LIdtG1uXMeicCtcGEJNKTRGHvjxmoxJCWP5FeKidaE'; // Replace with your Sheet ID
+  const API_KEY = 'AIzaSyD4GDVXpnJP2Wl15sIbb7To8q3gRm7wAQo'; // Replace with your API Key
+  const READ_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1?key=${API_KEY}`;
+  const WRITE_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1:append?valueInputOption=RAW&key=${API_KEY}`;
+
+  const [data, setData] = useState([]); // Store fetched data
+  const [className, setClassName] = useState(''); // Input field for Class Name
+  const [professorName, setProfessorName] = useState(''); // Input field for Professor Name
+
+  // Fetch Data on Component Mount
+  useEffect(() => {
+    fetchSheetData();
+  }, []);
+
+  // Function to Fetch Data from Google Sheets
+  const fetchSheetData = async () => {
+    try {
+      const response = await fetch(READ_URL);
+      const result = await response.json();
+      console.log('Fetched Data:', result.values);
+      setData(result.values); // Store fetched data in state
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  // Function to Write Data to Google Sheets
+  const writeSheetData = async () => {
+    if (!className || !professorName) {
+      Alert.alert('Error', 'Please fill in all fields.');
+      return;
+    }
+
+    const newRow = [[className, professorName]]; // New data to be added
+
+    try {
+      const response = await fetch(WRITE_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          values: newRow,
+        }),
+      });
+
+      if (response.ok) {
+        Alert.alert('Success', 'Data added successfully!');
+        fetchSheetData(); // Refresh the data
+        setClassName(''); // Clear input fields
+        setProfessorName('');
+      } else {
+        console.error('Failed to write data:', await response.text());
+      }
+    } catch (error) {
+      console.error('Error writing data:', error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -182,11 +245,55 @@ function AddClass({ navigation }) {
         placeholder="Enter Professor Name"
         placeholderTextColor="#888"
       />
-      <Text style={styles.label}>Section:</Text>
+      <SafeAreaView style={styles.footerContainerAddClass}>
+        <CustomButton
+          title="Save"
+          onPress={() => navigation.navigate('Grades')}
+          backgroundColor={colors.darkOrange}
+        />
+        <CustomButton
+          title="Cancel"
+          onPress={() => navigation.navigate('Grades')}
+          backgroundColor={colors.darkOrange}
+        />
+        <CustomButton
+          title="Add Assignments"
+          onPress={() => navigation.navigate('AddAssignments')}
+          backgroundColor={colors.darkOrange}
+        />
+      </SafeAreaView>
+    </SafeAreaView>
+   </TouchableWithoutFeedback>
+  );
+}
+
+function AddAssignments({ navigation }) {
+  return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
+    <SafeAreaView style={styles.container}>
+      <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Image
+          style={styles.backButtonImage} 
+          source={require('./assets/backButton.jpeg')} 
+        />
+      </Pressable>
+      <Text style={styles.addClassText}>Add Class!</Text>
+      <Text style={styles.label}>Class Name:</Text>
       <TextInput
-        keyboardType="numeric"
         style={styles.textInput}
-        placeholder="Enter Section"
+        placeholder="Enter Class Name"
+        placeholderTextColor={colors.placeholderTextColor || '#888'}
+      />
+      <Text style={styles.label}>Assignment Name:</Text>
+      <TextInput
+        style={styles.textInput}
+        placeholder="Beetlejuice Final Exam"
+        placeholderTextColor="#888"
+      />
+      <Text style={styles.label}>Weights Values:</Text>
+      <TextInput
+        style={styles.textInput}
+        placeholder="Beetlejuice Final Exam"
         placeholderTextColor="#888"
       />
       <SafeAreaView style={styles.footerContainerAddClass}>
