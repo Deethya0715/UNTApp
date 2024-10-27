@@ -1,4 +1,4 @@
-import React from 'react'; 
+import React, { useState, useEffect } from 'react'; 
 import {
   StyleSheet,
   SafeAreaView,
@@ -9,6 +9,7 @@ import {
   Keyboard,
   Pressable,
   TouchableWithoutFeedback,
+  Alert,
 } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
@@ -24,7 +25,7 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    return null; // Optionally return a loading component or null until the fonts are loaded
+    return <Text>Loading fonts...</Text>; // Loading indicator while fonts are loading
   }
 
   return (
@@ -32,9 +33,7 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator 
           initialRouteName="Home"
-          screenOptions={{
-            headerShown: false,
-          }}
+          screenOptions={{ headerShown: false }}
         >
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
@@ -44,9 +43,6 @@ export default function App() {
           <Stack.Screen name="Add Class" component={AddClass} />
           <Stack.Screen name="Add Assignments" component={AddAssignments} />
           <Stack.Screen name="Existing Class" component={ExistingClass} />
-
-
-          
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>
@@ -62,6 +58,7 @@ function HomeScreen({ navigation }) {
   const [data, setData] = useState([]); // Store fetched data
   const [className, setClassName] = useState(''); // Input field for Class Name
   const [professorName, setProfessorName] = useState(''); // Input field for Professor Name
+  const [loading, setLoading] = useState(false); // Loading state
 
   // Fetch Data on Component Mount
   useEffect(() => {
@@ -70,6 +67,7 @@ function HomeScreen({ navigation }) {
 
   // Function to Fetch Data from Google Sheets
   const fetchSheetData = async () => {
+    setLoading(true); // Set loading to true before the fetch
     try {
       const response = await fetch(READ_URL);
       const result = await response.json();
@@ -77,6 +75,9 @@ function HomeScreen({ navigation }) {
       setData(result.values); // Store fetched data in state
     } catch (error) {
       console.error('Error fetching data:', error);
+      Alert.alert('Error', 'Failed to fetch data from Google Sheets.');
+    } finally {
+      setLoading(false); // Set loading to false after the fetch completes
     }
   };
 
@@ -110,6 +111,7 @@ function HomeScreen({ navigation }) {
       }
     } catch (error) {
       console.error('Error writing data:', error);
+      Alert.alert('Error', 'Failed to write data to Google Sheets.');
     }
   };
 
@@ -181,24 +183,24 @@ function SignUp({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
       <View style={styles.container}>
-      <Text style={styles.text}>Hello React World!</Text>
-      <Text style={styles.label}>Email:</Text>
-      <TextInput
-        style={styles.textInput}
-        placeholder="i.e. LydiaDeetz33088@gmail.com"
-        placeholderTextColor={colors.placeholderTextColor || '#888'}
-      />
-      <CustomButton
-        title="Sign Up"
-        onPress={() => navigation.navigate('Grades')}
-        backgroundColor={colors.darkOrange}
-      />
-      <CustomButton
-        title="Back"
-        onPress={() => navigation.navigate('Login')}
-        backgroundColor={colors.darkOrange}
-      />
-    </View>
+        <Text style={styles.text}>Hello React World!</Text>
+        <Text style={styles.label}>Email:</Text>
+        <TextInput
+          style={styles.textInput}
+          placeholder="i.e. LydiaDeetz33088@gmail.com"
+          placeholderTextColor={colors.placeholderTextColor || '#888'}
+        />
+        <CustomButton
+          title="Sign Up"
+          onPress={() => navigation.navigate('Grades')}
+          backgroundColor={colors.darkOrange}
+        />
+        <CustomButton
+          title="Back"
+          onPress={() => navigation.navigate('Login')}
+          backgroundColor={colors.darkOrange}
+        />
+      </View>
     </TouchableWithoutFeedback>
   );
 }
@@ -225,101 +227,104 @@ function Grades({ navigation }) {
 function AddClass({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
-    <SafeAreaView style={styles.container}>
-      <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Image
-          style={styles.backButtonImage} 
-          source={require('./assets/backButton.jpeg')} 
+      <SafeAreaView style={styles.container}>
+        <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Image
+            style={styles.backButtonImage} 
+            source={require('./assets/backButton.jpeg')} 
+          />
+        </Pressable>
+        <Text style={styles.addClassText}>Add Class!</Text>
+        <Text style={styles.label}>Class Name:</Text>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Enter Class Name"
+          placeholderTextColor={colors.placeholderTextColor || '#888'}
         />
-      </Pressable>
-      <Text style={styles.addClassText}>Add Class!</Text>
-      <Text style={styles.label}>Class Name:</Text>
-      <TextInput
-        style={styles.textInput}
-        placeholder="Enter Class Name"
-        placeholderTextColor={colors.placeholderTextColor || '#888'}
-      />
-      <Text style={styles.label}>Professor Name:</Text>
-      <TextInput
-        style={styles.textInput}
-        placeholder="Enter Professor Name"
-        placeholderTextColor="#888"
-      />
-      <SafeAreaView style={styles.footerContainerAddClass}>
-        <CustomButton
-          title="Save"
-          onPress={() => navigation.navigate('Grades')}
-          backgroundColor={colors.darkOrange}
+        <Text style={styles.label}>Professor Name:</Text>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Enter Professor Name"
+          placeholderTextColor="#888"
         />
-        <CustomButton
-          title="Cancel"
-          onPress={() => navigation.navigate('Grades')}
-          backgroundColor={colors.darkOrange}
-        />
-        <CustomButton
-          title="Add Assignments"
-          onPress={() => navigation.navigate('AddAssignments')}
-          backgroundColor={colors.darkOrange}
-        />
+        <SafeAreaView style={styles.footerContainerAddClass}>
+          <CustomButton
+            title="Save"
+            onPress={() => navigation.navigate('Grades')}
+            backgroundColor={colors.darkOrange}
+          />
+          <CustomButton
+            title="Cancel"
+            onPress={() => navigation.navigate('Grades')}
+            backgroundColor={colors.darkOrange}
+          />
+          <CustomButton
+            title="Add Assignments"
+            onPress={() => navigation.navigate('AddAssignments')}
+            backgroundColor={colors.darkOrange}
+          />
+        </SafeAreaView>
       </SafeAreaView>
-    </SafeAreaView>
-   </TouchableWithoutFeedback>
+    </TouchableWithoutFeedback>
   );
 }
 
 function AddAssignments({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
-    <SafeAreaView style={styles.container}>
-      <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Image
-          style={styles.backButtonImage} 
-          source={require('./assets/backButton.jpeg')} 
+      <SafeAreaView style={styles.container}>
+        <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Image
+            style={styles.backButtonImage} 
+            source={require('./assets/backButton.jpeg')} 
+          />
+        </Pressable>
+        <Text style={styles.addClassText}>Add Assignments!</Text>
+        <Text style={styles.label}>Assignment Title:</Text>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Enter Assignment Title"
+          placeholderTextColor={colors.placeholderTextColor || '#888'}
         />
-      </Pressable>
-      <Text style={styles.addClassText}>Add Class!</Text>
-      <Text style={styles.label}>Class Name:</Text>
-      <TextInput
-        style={styles.textInput}
-        placeholder="Enter Class Name"
-        placeholderTextColor={colors.placeholderTextColor || '#888'}
-      />
-      <Text style={styles.label}>Assignment Name:</Text>
-      <TextInput
-        style={styles.textInput}
-        placeholder="Beetlejuice Final Exam"
-        placeholderTextColor="#888"
-      />
-      <Text style={styles.label}>Weights Values:</Text>
-      <TextInput
-        style={styles.textInput}
-        placeholder="Beetlejuice Final Exam"
-        placeholderTextColor="#888"
-      />
-      <SafeAreaView style={styles.footerContainerAddClass}>
-        <CustomButton
-          title="Save"
-          onPress={() => navigation.navigate('Grades')}
-          backgroundColor={colors.darkOrange}
+        <Text style={styles.label}>Due Date:</Text>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Enter Due Date"
+          placeholderTextColor="#888"
         />
-        <CustomButton
-          title="Cancel"
-          onPress={() => navigation.navigate('Grades')}
-          backgroundColor={colors.darkOrange}
-        />
+        <SafeAreaView style={styles.footerContainerAddClass}>
+          <CustomButton
+            title="Save"
+            onPress={() => navigation.navigate('Grades')}
+            backgroundColor={colors.darkOrange}
+          />
+          <CustomButton
+            title="Cancel"
+            onPress={() => navigation.navigate('Grades')}
+            backgroundColor={colors.darkOrange}
+          />
+        </SafeAreaView>
       </SafeAreaView>
-    </SafeAreaView>
-   </TouchableWithoutFeedback>
+    </TouchableWithoutFeedback>
   );
 }
 
 function ExistingClass({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Hello React World!</Text>
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
+      <SafeAreaView style={styles.container}>
+        <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Image
+            style={styles.backButtonImage} 
+            source={require('./assets/backButton.jpeg')} 
+          />
+        </Pressable>
+        <Text style={styles.text}>Existing Class!</Text>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
+
 
 function CustomButton({ title, onPress, backgroundColor }) {
   return (
